@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <!-- 生产环境中不建议使用 -->
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.css">
+ <style>
+ *{
+     padding: 0;
+     margin: 0;
+     list-style: none;
+ }
+ .lii{
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-top: 20px;
+     
+ }
+ ul{
+     height: 400px;
+    
+ }
+ span{
+     width:100px;
+     height:50px;
+     background-color: rgba(62, 186, 207, 0.767);
+     border-radius: 5px;
+     line-height: 50px;
+     text-align: center;
+     color:white
+ }
+ </style>
+</head>
+
+<body>
+    <div id='ele'></div>
+    
+
+</body>
+<script type="text/babel">
+class But extends React.Component{
+    constructor(props){
+        super(props)
+        this.state={
+           number:this.props.num
+        }
+    }
+    handleChange(e){
+       if(e.target.value=='0' ){
+           var id=this.props.id
+           var num=this.props.num
+        this.props.onnum(e.target.value,{id,num})
+       }else if(e.target.value=='1'){
+        var id=this.props.id
+           var num=this.props.num
+        this.props.onnum(e.target.value,{id,num})
+          
+       }
+    }
+    componentWillReceiveProps(newProps){
+        
+        this.setState({
+            number:newProps.num
+        })
+        // console.log(this.state.number)
+    }
+    render(){
+        return(
+            <div>
+                <button value='0' onClick={(event)=>{this.handleChange(event)}}>-</button>
+                {this.state.number}
+                
+                <button value='1' onClick={(event)=>{this.handleChange(event)}}>+</button>
+            </div>
+        )
+    }
+}
+class GoodList extends React.Component{
+    constructor(props){
+        super(props)
+       this.state={
+       
+       }
+    }
+    render(){
+        return(
+            <div>
+                <ul>
+               {this.props.list}
+               </ul>
+            </div>
+        )
+    }
+}
+ class Bigbox extends React.Component{
+     constructor(props){
+         super(props)
+         this.state={
+            allprice:0,
+            list:[{name:'电脑',id:'001',price:2500,totalprice:0,num:0},
+            {name:'手机',id:'002',price:1500,totalprice:0,num:0},
+            {name:'床',id:'003',price:3400,totalprice:0,num:0},
+            {name:'香水',id:'004',price:500,totalprice:0,num:0}]
+         }
+         this.handleValue=this.handleValue.bind(this)
+     }
+     handleValue(value,{id,num}){
+        if(value=='0' &&num>0){
+            var target=this.state.list.filter((item,index)=>{
+                return id==item.id
+            })
+         
+            target[0].num-=1
+            target[0].totalprice=target[0].num*target[0].price
+            var all=0
+            this.state.list.forEach((item,index)=>{
+                 all+=item.totalprice
+            })
+            this.setState({
+                allprice: all
+            })
+        }else if(value=='1'){
+            var target=this.state.list.filter((item,index)=>{
+                return id==item.id
+            })
+            target[0].num+=1
+            target[0].totalprice=target[0].num*target[0].price
+            var all=0
+            this.state.list.forEach((item,index)=>{
+                 all+=item.totalprice
+            })
+            this.setState({
+                allprice: all
+            })
+        }
+     }
+     render(){
+         var list=this.state.list.map((item)=>{
+             return <li value={item.id} key={item.id} className='lii'>
+                <span>名称  {item.name}</span> 
+                <span>单价  {item.price}</span>
+                <But num={item.num} id={item.id} onnum={this.handleValue}/> <span>总价  {item.totalprice}</span></li>
+         })
+         return(
+            <div>
+         <GoodList list={list}/>
+         <p> 总价：{this.state.allprice}</p>
+         </div>
+         )
+     }
+ }
+ReactDOM.render(
+     <div>
+      <Bigbox/>
+     </div>,
+     document.getElementById('ele')
+ )
+</script>
+</html>
